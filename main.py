@@ -13,7 +13,9 @@ from models import Item, ItemCreate, ItemUpdate
 
 # Initialize database on startup using lifespan
 @asynccontextmanager
-async def lifespan(app_instance: FastAPI):  # pylint: disable=redefined-outer-name
+async def lifespan(
+    app_instance: FastAPI,
+):  # pylint: disable=redefined-outer-name,unused-argument
     """Manage application lifespan events."""
     # Startup
     init_db()

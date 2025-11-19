@@ -1,15 +1,15 @@
 """Database configuration and models for the DevOps Items API."""
 
-from sqlalchemy import (
+from sqlalchemy import (  # pylint: disable=import-error
     create_engine,
     Column,
     Integer,
     String,
-)  # pylint: disable=import-error
-from sqlalchemy.orm import (
+)
+from sqlalchemy.orm import (  # pylint: disable=import-error
     declarative_base,
     sessionmaker,
-)  # pylint: disable=import-error
+)
 
 # SQLite database URL
 SQLALCHEMY_DATABASE_URL = "sqlite:///./devops_items.db"
