@@ -1,19 +1,24 @@
-import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+"""Unit tests for the DevOps Items API."""
+
+import pytest  # pylint: disable=import-error
+from fastapi.testclient import TestClient  # pylint: disable=import-error
+from sqlalchemy import create_engine  # pylint: disable=import-error
+from sqlalchemy.orm import sessionmaker  # pylint: disable=import-error
 
 from main import app
 from database import Base, get_db
 
 # Create test database
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test_devops_items.db"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 # Override get_db dependency
 def override_get_db():
+    """Override the get_db dependency for testing."""
     try:
         db = TestingSessionLocal()
         yield db
@@ -70,7 +75,7 @@ def test_get_items_with_data():
     # Create items
     client.post("/items", json={"text": "Kubernetes"})
     client.post("/items", json={"text": "Jenkins"})
-    
+
     # Get all items
     response = client.get("/items")
     assert response.status_code == 200
@@ -85,7 +90,7 @@ def test_update_item():
     # Create an item
     create_response = client.post("/items", json={"text": "GitLab"})
     item_id = create_response.json()["id"]
-    
+
     # Update the item
     update_response = client.put(f"/items/{item_id}", json={"text": "GitLab CI/CD"})
     assert update_response.status_code == 200
@@ -106,11 +111,11 @@ def test_delete_item():
     # Create an item
     create_response = client.post("/items", json={"text": "Ansible"})
     item_id = create_response.json()["id"]
-    
+
     # Delete the item
     delete_response = client.delete(f"/items/{item_id}")
     assert delete_response.status_code == 204
-    
+
     # Verify it's deleted
     get_response = client.get("/items")
     assert get_response.status_code == 200
@@ -130,21 +135,21 @@ def test_crud_workflow():
     create_response = client.post("/items", json={"text": "Terraform"})
     assert create_response.status_code == 201
     item_id = create_response.json()["id"]
-    
+
     # Read
     get_response = client.get("/items")
     assert get_response.status_code == 200
     assert len(get_response.json()) == 1
-    
+
     # Update
     update_response = client.put(f"/items/{item_id}", json={"text": "Terraform Cloud"})
     assert update_response.status_code == 200
     assert update_response.json()["text"] == "Terraform Cloud"
-    
+
     # Delete
     delete_response = client.delete(f"/items/{item_id}")
     assert delete_response.status_code == 204
-    
+
     # Verify empty
     final_get_response = client.get("/items")
     assert final_get_response.status_code == 200

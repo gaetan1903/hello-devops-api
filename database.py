@@ -1,5 +1,15 @@
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.orm import declarative_base, sessionmaker
+"""Database configuration and models for the DevOps Items API."""
+
+from sqlalchemy import (
+    create_engine,
+    Column,
+    Integer,
+    String,
+)  # pylint: disable=import-error
+from sqlalchemy.orm import (
+    declarative_base,
+    sessionmaker,
+)  # pylint: disable=import-error
 
 # SQLite database URL
 SQLALCHEMY_DATABASE_URL = "sqlite:///./devops_items.db"
@@ -17,7 +27,9 @@ Base = declarative_base()
 
 
 # Database model
-class ItemDB(Base):
+class ItemDB(Base):  # pylint: disable=too-few-public-methods
+    """Database model for DevOps items."""
+
     __tablename__ = "items"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -26,11 +38,13 @@ class ItemDB(Base):
 
 # Create tables
 def init_db():
+    """Initialize the database by creating all tables."""
     Base.metadata.create_all(bind=engine)
 
 
 # Dependency to get DB session
 def get_db():
+    """Get a database session for dependency injection."""
     db = SessionLocal()
     try:
         yield db
