@@ -22,7 +22,7 @@ app = FastAPI(
     title="DevOps Items API",
     description="API for managing DevOps items",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 # Configure CORS
@@ -64,7 +64,7 @@ def update_item(id: int, item: ItemUpdate, db: Session = Depends(get_db)):
     db_item = db.query(ItemDB).filter(ItemDB.id == id).first()
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
-    
+
     db_item.text = item.text
     db.commit()
     db.refresh(db_item)
@@ -77,7 +77,13 @@ def delete_item(id: int, db: Session = Depends(get_db)):
     db_item = db.query(ItemDB).filter(ItemDB.id == id).first()
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
-    
+
     db.delete(db_item)
     db.commit()
     return None
+
+
+# Hello world endpoint
+@app.get("/hello")
+def hello_world():
+    return "Hello, World!"
